@@ -1,4 +1,5 @@
 chrome.runtime.onMessage.addListener(function(request, sender) {
+    
     if (request.action == "getSource") {
       message.innerText = request.source;
     }
@@ -7,7 +8,6 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
   function onWindowLoad() {
   
     var message = document.querySelector('#message');
-  
     chrome.tabs.executeScript(null, {
       file: "getPagesSource.js"
     }, function() {
