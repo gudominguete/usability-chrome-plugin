@@ -23,19 +23,41 @@ function DOMtoString(document_root) {
         }
         node = node.nextSibling;
     }
-    // console.log("Hierarquia");
-    // console.log(verificarHierarquiaHeader(html));
-    // console.log("Possui header");
-    // console.log(verificarHeader(html));
-    // console.log("Texto alternativo em imagens");
-    // console.log(verificarAltDeImagem(html));
-    console.log("Toda input possui uma label?");
-    console.log(verificarInputLabel(html));
 
-    // console.log()
-    // var tag = buscarTag("h2", html);
-    // console.log(buscarTag("img", html));
-    return html;
+    var problemasUsabilidade = "";
+    if(!verificarHierarquiaHeader(html)){
+        problemasUsabilidade += "A página não respeita a hierarquia dos headers\n";
+    }
+    if(!verificarHeader(html)){
+        problemasUsabilidade += "A página não possui um header para identificar qual página está\n";
+    }
+    if(!verificarAltDeImagem(html)){
+        problemasUsabilidade += "Existem imagens que não possuem um texto alternativo\n";
+    }
+
+    if(!verificarInputLabel(html)){
+        problemasUsabilidade += "Existem inputs que não possuem label\n";
+    }
+
+    if(!verificarClickKey(html)){
+        problemasUsabilidade += "Existem botões com eventos de click que não possuem eventos de keypress\n";
+    }
+    return problemasUsabilidade;
+}
+
+function verificarClickKey(html){
+    var botoes = buscarTodasTags("button", html);
+
+    for(var cont = 0; cont < botoes.length; botoes++){
+        
+        var onclick = buscarValorAtributosTag(botoes[cont], "onclick");
+        if(onclick !== null){
+            var onkeypress = buscarValorAtributosTag(botoes[cont], "onkeypress");
+            
+            if(onkeypress === null) return false;
+        }
+    }
+    return true;
 }
 
 function verificarInputLabel(html){
@@ -51,7 +73,6 @@ function verificarInputLabel(html){
     var inputsComLabel = [];
     for(var cont=0; cont<labels.length; cont++){
         var valor = buscarValorAtributosTag(labels[cont], "for");
-        console.log(valor);
         if(valor !== null){
             for(var cont2 = 0; cont2 < inputNames.length; cont2++){
                 if(valor === inputNames[cont2]){
